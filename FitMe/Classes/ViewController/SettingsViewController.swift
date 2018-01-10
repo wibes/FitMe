@@ -18,6 +18,7 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initVC()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -28,6 +29,11 @@ class SettingsViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         saveData()
+    }
+    
+    func initVC() {
+        self.navigationItem.title = "Personal Details"
+        self.navigationController?.navigationBar.tintColor = UIColor.white
     }
     
     func showData() {

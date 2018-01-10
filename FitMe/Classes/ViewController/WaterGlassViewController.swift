@@ -95,6 +95,12 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
         endDate = endDate.removeHyphenFromString()
     
         if let btwDetail = manager.getWaterDetailArr(sqlStatement: "SELECT COUNT, DATE FROM WATER_DETAIL WHERE DATE >= '\(startDate)' AND DATE <= '\(endDate)'") {
+            guard detail.count != 0 else{
+                lblArr.append(Utility.getDayString(fromDate: Date()))
+                countArr.append(0)
+                
+                return
+            }
             for  detail in btwDetail {
                 lblArr.append(Utility.getDayString(fromDate: detail.date!))
                 countArr.append(CGFloat(detail.count!))
@@ -116,7 +122,7 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
         case .Year:
             initYearlyGraph()
         }
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+        tableView.reloadData()
     }
    
     @IBAction func showAlertWithInput() {
@@ -127,7 +133,7 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
             let waterDetail = DailyWaterDetail(date: Utility.date(fromString: textfields[1].text!), count: Int(textfields[0].text!)!)
             self.manager.insertWaterDetail(detail: waterDetail)
             self.actionSegmentControl(self.segmentControl)
-            self.tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+            self.tableView.reloadData()
         }
     }
     

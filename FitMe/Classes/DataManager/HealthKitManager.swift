@@ -16,6 +16,7 @@ class HealthKitManager: NSObject {
     static let sharedInstance = HealthKitManager()
     var healthStore: HKHealthStore = HKHealthStore()
     
+    // Check for permissions to use healthkit application
      func authorizeHealthKit(completion:@escaping (Bool) -> ()) {
         HealthKitSetupAssistant.authorizeHealthKit {(authorized, error) in
             if !authorized  {

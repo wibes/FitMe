@@ -15,9 +15,11 @@ class CoreMotionManager: NSObject {
     
     static let sharedInstance = CoreMotionManager()
     let pedometer = CMPedometer()
+    let manager = CMMotionManager()
     
     //MARK:- CoreMotion Methods
     
+    // Query pedometer for previous data
     func getPedometerData(fromDate:Date, toDate:Date, completionHandler handler: @escaping (CMPedometerData) -> ()) {
         if(CMPedometer.isStepCountingAvailable()){
             pedometer.queryPedometerData(from: fromDate as Date, to: toDate) {(data, error) -> Void in
@@ -30,6 +32,7 @@ class CoreMotionManager: NSObject {
         }
     }
     
+    // Start pedometer update
     func startPedometerUpdate(from:Date, completionHandler handler:@escaping (CMPedometerData?,Error?) -> ()) {
         pedometer.startUpdates(from: Date(), withHandler:{(pedometerData, error) in
             DispatchQueue.main.async {
@@ -38,6 +41,7 @@ class CoreMotionManager: NSObject {
         })
     }
     
+    // Stop pedometer update
     func stopPedometerUpdate() {
         pedometer.stopUpdates()
     }

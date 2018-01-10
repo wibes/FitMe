@@ -42,13 +42,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func initVC() {
-        let last7DatesArr = Utility.getLast7Dates()
-        getStepArrayFor(dates: last7DatesArr)
         registerTableCells()
+        let lastSevenDatesArr = Utility.getLastSevenDates()
+        setStepFor(dates: lastSevenDatesArr)
         
-        // HeathKit 
+        // Check for HeathKit authorization
         gHeathKitManager.authorizeHealthKit {[unowned self] (authStatus) in
-            if authStatus {                
+            if authStatus {
+                //Set record cells
                 self.getMaxCount(forType: ERecord.Step)
                 self.getMaxCount(forType: ERecord.Calorie)
                 self.getMaxCount(forType: ERecord.CyclingDistance)
@@ -79,7 +80,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return maxHistory.last!
     }
     
-    private func getStepArrayFor(dates:[Date]) {
+    private func setStepFor(dates:[Date]) {
         for date in dates {
             gCoreMotionManager.getPedometerData(fromDate: date, toDate: Utility.getEndDateFor(date: date), completionHandler: {[unowned self] (data) in
                 self.stepArr.append(CGFloat(truncating: data.numberOfSteps))
@@ -94,7 +95,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //MARK:- Navigation Method
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
         if segue.identifier == "DashToHistory" {
             let selectedIndex = tabelView.indexPathForSelectedRow
             let selectedCell = tabelView.cellForRow(at: selectedIndex!) as! RecordTableCell
@@ -106,12 +106,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //MARK:- UITableView DataSource/Delegate
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 30
+        let kHeaderHeight:CGFloat = 30
+        
+        return kHeaderHeight
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-       
-        let headerCell = tableView.dequeueReusableCell(withIdentifier: "HeaderTableCell") as! HeaderTableViewCell
+        let kHeaderCellIdentifier = "HeaderTableCell"
+        let headerCell = tableView.dequeueReusableCell(withIdentifier:kHeaderCellIdentifier) as! HeaderTableViewCell
         
         switch section {
         case ESection.Graph.rawValue:
@@ -134,15 +136,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let kTrackCellHeight:CGFloat = 90
+        let kRecordCellHeight:CGFloat = 80
+        let kGraphCellHeight:CGFloat = 250
         let section:ESection = ESection(rawValue: indexPath.section)!
         
         switch section {
         case .Track:
-            return 90
+            return kTrackCellHeight
         case .Record:
-            return 80
+            return kRecordCellHeight
         case .Graph:
-            return 250
+            return kGraphCellHeight
         }
     }
 
@@ -155,39 +160,47 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         case .Track:
             return 2
         case .Record:
-            return recordArr.count
+            return recordArr.count == 0 ? 1 : recordArr.count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let section:ESection = ESection(rawValue: indexPath.section)!
+        let kTrackCellIdentifier = "TrackStepCell"
+        let kRecordCellIdentifer = "RecordCell"
+        let kGraphCellIdentifer = "GraphCell"
         
         switch section {
         case .Track:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "TrackStepCell") as! TrackTableCell
+            let cell = tableView.dequeueReusableCell(withIdentifier:kTrackCellIdentifier) as! TrackTableCell
             cell.setDataToCell(trackIndex: ETrack(rawValue: indexPath.row)!)
             return cell
         case .Record:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "RecordCell") as! RecordTableCell
+            guard recordArr.count != 0 else {
+                return Utility.createCellWith(message: "No records found")
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier:kRecordCellIdentifer) as! RecordTableCell
             cell.setDataToCell(history: recordArr[indexPath.row])
             return cell
         case .Graph:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "GraphCell") as! GraphTableCell
+            let cell = tableView.dequeueReusableCell(withIdentifier:kGraphCellIdentifer) as! GraphTableCell
             cell.setDataToCell(countArr: stepArr, xLabelArr:dayStringArr)
             return cell
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let kDashToStepIdentifier = "DashToTrackStep"
+        let kDashToWaterIdentifier = "DashToTrackWater"
+        
         if indexPath.section == ESection.Track.rawValue {
             let selectedRow:ETrack = ETrack(rawValue: indexPath.row)!
             
             switch selectedRow {
             case .Step:
-                self.performSegue(withIdentifier: "DashToTrackStep", sender: nil)
-            case.Water:
-                self.performSegue(withIdentifier: "DashToTrackWater", sender: nil)
+                self.performSegue(withIdentifier:kDashToStepIdentifier, sender: nil)
+            case .Water:
+                self.performSegue(withIdentifier:kDashToWaterIdentifier, sender: nil)
             }
         }
     }

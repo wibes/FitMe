@@ -13,6 +13,7 @@ class SqlLiteManager: NSObject {
     
     var databaseHandle:OpaquePointer?
     
+    // Get document directory path, where db will be created
     func getDatabasePath()->String {
         let dirPaths =
             NSSearchPathForDirectoriesInDomains(.documentDirectory,
@@ -22,6 +23,7 @@ class SqlLiteManager: NSObject {
             path: kWATER_DATABASE)
     }
     
+    // Open connection and create db table if table is not created
     func initDatabase() {
         let dbPath = getDatabasePath()
         print("Database at: \(dbPath)")
@@ -48,6 +50,7 @@ class SqlLiteManager: NSObject {
         }
     }
     
+    // Insert all details into db table
     func insertWaterDetail(detail:DailyWaterDetail) {
         var stringDate = Utility.string(fromDate: detail.date!)
         stringDate = stringDate.removeHyphenFromString()
@@ -66,6 +69,7 @@ class SqlLiteManager: NSObject {
         sqlite3_finalize(insertStatement)
     }
     
+    // Get all rows from db table into model array
     func getWaterDetailArr(sqlStatement:String)->[DailyWaterDetail]? {
         var statement:OpaquePointer? = nil
         
@@ -86,6 +90,7 @@ class SqlLiteManager: NSObject {
         return nil
     }
     
+    //Get maximum count from db where date gets matched with passed dateType
     func getCountSum(forDateType:String)->Int? {
         let sqlStatement = "SELECT SUM(COUNT) FROM \(kTABLE_NAME) WHERE DATE LIKE '\(forDateType)%'"
         var statement:OpaquePointer? = nil
@@ -103,6 +108,7 @@ class SqlLiteManager: NSObject {
         return nil
     }
     
+    // Close db connection
     func closeDatabaseConnection() {
         if sqlite3_close(databaseHandle) == SQLITE_OK {
             print("closed connection")

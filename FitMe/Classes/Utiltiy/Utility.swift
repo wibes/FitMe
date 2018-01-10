@@ -14,6 +14,7 @@ class Utility: NSObject {
     
     //MARK:- Conversion Methods
     
+    // Changes time format to hour:minute:second
     class func timeIntervalFormat(interval:TimeInterval)-> String {
         var seconds = Int(interval + 0.5) //round up seconds
         let hours = seconds / 3600
@@ -22,38 +23,32 @@ class Utility: NSObject {
         return String(format:"%02i:%02i:%02i",hours,minutes,seconds)
     }
     
-    class func paceString(title:String,pace:Double) -> String{
-        var minPerMile = 0.0
-        let factor = 26.8224 //conversion factor
-        if pace != 0 {
-            minPerMile = factor / pace
-        }
-        let minutes = Int(minPerMile)
-        let seconds = Int(minPerMile * 60) % 60
-        return String(format: "%@: %02.2f m/s \n\t\t %02i:%02i min/mi",title,pace,minutes,seconds)
-    }
-    
-    class func miles(meters:Double)-> Double {
+    // Convert meters to miles
+    class func meterToMiles(meters:Double)-> Double {
         let mile = 0.000621371192
         return meters * mile
     }
     
+    // Convert mps to kmps
     class func mpsTokmps(mps:NSNumber)->String {
         return String(format: "%.2f", mps.floatValue * 3.6)
     }
     
+    // Convert m to km
     class func mToKm(m:NSNumber)->String {
         return String(format: "%.2f", m.floatValue / 1000)
     }
     
     //MARK:- DATE/TIME Methods
     
+    // Get current date with time 00:00:01 AM
     class func getTodayStartDay()->Date {
         var calendar = NSCalendar.current
         calendar.timeZone = TimeZone(abbreviation: "UTC")!
         return calendar.startOfDay(for: Date())
     }
     
+    // Set passed date time to 23:59:59 PM
     class func getEndDateFor(date:Date)->Date {
         let calendar = NSCalendar.current
         var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
@@ -67,6 +62,7 @@ class Utility: NSObject {
         return dateAtEnd!
     }
     
+    // get only date component from passed date in string format
     class func getDayString(fromDate:Date)->String {
         let calendar = NSCalendar.current
         var components = DateComponents()
@@ -76,7 +72,8 @@ class Utility: NSObject {
         return String(describing: components.day!)
     }
     
-    class func getLast7Dates()->[Date] {
+    // Get current and last 6 days dates in array of dates
+    class func getLastSevenDates()->[Date] {
         let cal = Calendar.current
         var date = cal.startOfDay(for: Date())
         var dayArr = [Date]()
@@ -89,6 +86,7 @@ class Utility: NSObject {
         return dayArr
     }
     
+    // Get current and last two months in array of strings
     class func getLast3Months()->[String] {
         let cal = Calendar.current
         var date = cal.startOfDay(for: Date())
@@ -105,6 +103,7 @@ class Utility: NSObject {
         return monthArr.reversed()
     }
     
+    // Get current and previous year in array of strings
     class func getYearArr()->[String] {
         let cal = Calendar.current
         var date = cal.startOfDay(for: Date())
@@ -121,6 +120,7 @@ class Utility: NSObject {
         return yearArr.reversed()
     }
 
+    // Convert date to string
     class func string(fromDate:Date)->String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -134,6 +134,7 @@ class Utility: NSObject {
         return stringDate
     }
     
+    // Convert String to date format yyyy/mm/dd
     class func date(fromString:String)->Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = kDATE_FORMAT
@@ -145,6 +146,7 @@ class Utility: NSObject {
         return sDate
     }
     
+    // Return last seventh date from today
     class func getLastSeventhDate()->Date {
         let cal = Calendar.current
         let date = cal.startOfDay(for: Date())
@@ -154,6 +156,7 @@ class Utility: NSObject {
     
     //MARK:- Alert Methods
     
+    // Alert with textfields
     class func showAlertWith(title:String, message:String, placeHolderTF:[String], fromVC:UIViewController, completion:@escaping([UITextField])->Void){
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
@@ -193,5 +196,19 @@ class Utility: NSObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = kDATE_FORMAT
         self.dateTF!.text = dateFormatter.string(from: sender.date)
+    }
+    
+    //MARK:- TableView Method
+    
+    // Used to display message when no cell is available to display
+    class func createCellWith(message:String)->UITableViewCell {
+        let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "EmptyCell")
+        cell.textLabel?.text = message
+        cell.textLabel?.textColor = UIColor.white
+        cell.backgroundColor = UIColor.clear
+        cell.selectionStyle = .none
+        cell.textLabel?.textAlignment = .center
+        
+        return cell
     }
 }
