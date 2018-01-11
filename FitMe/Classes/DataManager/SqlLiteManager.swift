@@ -45,6 +45,7 @@ class SqlLiteManager: NSObject {
                 } else {
                     print("CREATE TABLE statement could not be prepared.")
                 }
+            
                 sqlite3_finalize(createTableStatement)
             }
         }
@@ -61,12 +62,31 @@ class SqlLiteManager: NSObject {
             if sqlite3_step(insertStatement) == SQLITE_DONE {
                 print("Successfully inserted row.")
             } else {
-                print("Could not insert row.")
+                updateWater(detail: detail)
             }
         } else {
             print("INSERT statement could not be prepared.")
         }
         sqlite3_finalize(insertStatement)
+    }
+    
+    // Update detail into db table
+    func updateWater(detail:DailyWaterDetail) {
+        var stringDate = Utility.string(fromDate: detail.date!)
+        stringDate = stringDate.removeHyphenFromString()
+        let sqlStatement = "UPDATE \(kTABLE_NAME) SET COUNT = '\(detail.count!)' WHERE DATE LIKE '\(detail.date!)';"
+        var updateStatement: OpaquePointer? = nil
+        
+        if sqlite3_prepare_v2(databaseHandle, sqlStatement, -1, &updateStatement, nil) == SQLITE_OK {
+            if sqlite3_step(updateStatement) == SQLITE_DONE {
+                print("Successfully updated row.")
+            } else {
+                print("Could not update row.")
+            }
+        } else {
+            print("Update statement could not be prepared.")
+        }
+        sqlite3_finalize(updateStatement)
     }
     
     // Get all rows from db table into model array
@@ -95,8 +115,7 @@ class SqlLiteManager: NSObject {
         let sqlStatement = "SELECT SUM(COUNT) FROM \(kTABLE_NAME) WHERE DATE LIKE '\(forDateType)%'"
         var statement:OpaquePointer? = nil
         
-        if (sqlite3_prepare_v2(databaseHandle, sqlStatement, -1, &statement, nil) == SQLITE_OK)
-        {
+        if (sqlite3_prepare_v2(databaseHandle, sqlStatement, -1, &statement, nil) == SQLITE_OK) {
             while (sqlite3_step(statement) == SQLITE_ROW) {
                 let count = Int(sqlite3_column_int(statement, 0))
                 

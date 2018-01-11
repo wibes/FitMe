@@ -31,12 +31,16 @@ class HistoryViewController: UIViewController, UITableViewDelegate, UITableViewD
         if type == ERecord.Calorie {
             getHistory(dataFor: ERecord.Calorie)
             bannerImageView.image = UIImage(named: "calorie_banner")
+            self.navigationItem.title = "Calories burned"
+            
         } else if type == ERecord.Step {
             getHistory(dataFor: ERecord.Step)
             bannerImageView.image = UIImage(named: "running_banner")
+            self.navigationItem.title = "Steps taken"
         } else {
             getHistory(dataFor: ERecord.CyclingDistance)
             bannerImageView.image = UIImage(named: "cycling_banner")
+            self.navigationItem.title = "Cycling distance"
         }
     }
     

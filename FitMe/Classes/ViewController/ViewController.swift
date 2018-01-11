@@ -35,6 +35,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         initVC()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let lastSevenDatesArr = Utility.getLastSevenDates()
+        initStepGraph(dates: lastSevenDatesArr)
+    }
+    
     //MARK:- Private methods
     
     private func registerTableCells() {
@@ -43,8 +49,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     private func initVC() {
         registerTableCells()
-        let lastSevenDatesArr = Utility.getLastSevenDates()
-        setStepFor(dates: lastSevenDatesArr)
         
         // Check for HeathKit authorization
         gHeathKitManager.authorizeHealthKit {[unowned self] (authStatus) in
@@ -64,7 +68,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 maxHistory.type = forType
                 self.recordArr.append(maxHistory)
                 DispatchQueue.main.async {
-                    self.tabelView.reloadData()
+                self.tabelView.reloadSections([ESection.Record.rawValue], with: .automatic)
                 }
             }
         }
@@ -80,16 +84,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return maxHistory.last!
     }
     
-    private func setStepFor(dates:[Date]) {
+    private func initStepGraph(dates:[Date]) {
+        emptyArray()
+
         for date in dates {
             gCoreMotionManager.getPedometerData(fromDate: date, toDate: Utility.getEndDateFor(date: date), completionHandler: {[unowned self] (data) in
                 self.stepArr.append(CGFloat(truncating: data.numberOfSteps))
                 self.dayStringArr.append(Utility.getDayString(fromDate: date))
                 if self.dayStringArr.count == dates.count {
-                    self.tabelView.reloadRows(at: [IndexPath(row: 0, section: ESection.Graph.rawValue)], with: .automatic)
+                    DispatchQueue.main.async {
+                    self.tabelView.reloadSections([ESection.Graph.rawValue], with: .automatic)
+                    }
                 }
             })
         }
+    }
+    
+    private func emptyArray() {
+        stepArr.removeAll()
+        dayStringArr.removeAll()
     }
     
     //MARK:- Navigation Method
@@ -119,6 +132,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         case ESection.Graph.rawValue:
             let headerView = UIView()
             headerCell.headerLbl.text = "Weekly Steps Record"
+            headerView.addSubview(headerCell)
+            return headerView
+        case ESection.Track.rawValue:
+            let headerView = UIView()
+            headerCell.headerLbl.text = "Track"
             headerView.addSubview(headerCell)
             return headerView
         case ESection.Record.rawValue:

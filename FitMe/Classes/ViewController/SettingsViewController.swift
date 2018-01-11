@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var nameTF: UITextField!
     @IBOutlet weak var weightTF: UITextField!
@@ -51,4 +51,13 @@ class SettingsViewController: UIViewController {
         
         gDataManager.savePersonalData()
     }
+    
+    //MARK: UITextField Delegate Methods
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.endEditing(true)
+        
+        return true
+    }
+    
 }

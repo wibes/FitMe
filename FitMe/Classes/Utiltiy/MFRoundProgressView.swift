@@ -41,7 +41,7 @@ class MFRoundProgressView: UIView {
         }
         
         // Color Declarations
-        let progressColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        let progressColor = UIColor.red
         let progressBackgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.4)
         let titleColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.8)
         
