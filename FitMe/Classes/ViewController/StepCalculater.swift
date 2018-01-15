@@ -61,7 +61,7 @@ class StepCalculater: UIViewController {
         startStopBtn.clipsToBounds = true
     }
     
-    //MARK: - Timer functions
+    //Timer functions
     private func startTimer() {
         if timer.isValid { timer.invalidate() }
         timer = Timer.scheduledTimer(timeInterval: timerInterval,target: self,selector: #selector(timerAction(timer:)) ,userInfo: nil,repeats: true)
@@ -82,6 +82,7 @@ class StepCalculater: UIViewController {
         timeLbl.text = Utility.timeIntervalFormat(interval: timeElapsed)
     }
     
+    //Start Pedometer update
     private func startPedometer() {
         startTimer()
         gCoreMotionManager.startPedometerUpdate(from: Date()) { (pedoData,error) in
@@ -91,6 +92,13 @@ class StepCalculater: UIViewController {
             }
             self.setDataFrom(pedData: pedoData!)
         }
+    }
+    
+    //Stop pedometer update
+    private func stopPedometer() {
+        stopTimer()
+        checkTodayTotalStep()
+        gCoreMotionManager.stopPedometerUpdate()
     }
     
     private func setDataFrom(pedData:CMPedometerData) {
@@ -104,12 +112,6 @@ class StepCalculater: UIViewController {
         if let pace = pedData.currentPace {
             self.paceLabel.text = Utility.mpsTokmps(mps: pace)
         }
-    }
-    
-    private func stopPedometer() {
-        stopTimer()
-        checkTodayTotalStep()
-        gCoreMotionManager.stopPedometerUpdate()
     }
     
     private func updateProgressBar() {

@@ -1,8 +1,8 @@
 //
-//  DataManager.swift
+//  CoreDataManager.swift
 //  FitMe
 //
-//  Created by Chandan Makhija on 20/12/17.
+//  Created by Chandan Makhija on 29/12/17.
 //  Copyright © 2017 Chandan Makhija. All rights reserved.
 //
 
@@ -24,8 +24,7 @@ class CoreDataManager: NSObject {
         }
         let managedContext =
             appDelegate.persistentContainer.viewContext
-        
-        return managedContext
+            return managedContext
     }
     
     func savePersonalData() {
@@ -40,7 +39,6 @@ class CoreDataManager: NSObject {
         let personal:NSManagedObject!
         
         if(result.count == 0) {
-        
             let entity =
             NSEntityDescription.entity(forEntityName: kPERSONAL_ENTITY,
                                        in: managedContext)!
@@ -67,7 +65,6 @@ class CoreDataManager: NSObject {
         guard let managedContext = getManagedContext() else {
             return nil
         }
-        
         let fetchRequest =
             NSFetchRequest<NSManagedObject>(entityName: fromEntity)
         

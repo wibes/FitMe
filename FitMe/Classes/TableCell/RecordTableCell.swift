@@ -8,12 +8,6 @@
 
 import UIKit
 
-enum EUnit:String {
-    case KiloCal = "kCal"
-    case Miles = "miles"
-    case StepCount = "steps"
-}
-
 class RecordTableCell: UITableViewCell {
 
     @IBOutlet weak var activityCount: UILabel!

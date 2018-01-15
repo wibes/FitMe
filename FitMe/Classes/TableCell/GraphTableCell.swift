@@ -40,13 +40,11 @@ class GraphTableCell: UITableViewCell {
     
     func setDataToCell(countArr:[CGFloat]?, xLabelArr:[String]?) {
         lineChartView.clearAll()
-        
         guard countArr != nil, xLabelArr?.count != 0 else {
             lineChartView.x.labels.visible = false
             lineChartView.addLine([0])
             return
         }
-        
         lineChartView.addLine(countArr!)
         lineChartView.x.labels.values = xLabelArr!
     }

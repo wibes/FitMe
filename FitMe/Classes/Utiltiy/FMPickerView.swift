@@ -17,7 +17,7 @@ class FMPickerView: UIPickerView, UIPickerViewDataSource, UIPickerViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(){
+    init() {
         super.init(frame:CGRect.zero)
         self.delegate = self
         self.dataSource = self
@@ -26,17 +26,15 @@ class FMPickerView: UIPickerView, UIPickerViewDataSource, UIPickerViewDelegate {
     
     // MARK:- UIPicker delegate methods
     
-    func numberOfComponents(in pickerView: UIPickerView) -> Int    {
+    func numberOfComponents(in pickerView: UIPickerView)->Int {
         return 1
     }
     
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
-    {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int)->Int {
         return pickerDataSource.count
     }
     
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String?
-    {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)->String? {
         let value = pickerDataSource[row] as! String
         return value
     }

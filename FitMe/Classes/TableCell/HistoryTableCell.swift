@@ -21,7 +21,6 @@ class HistoryTableCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
     
@@ -30,5 +29,4 @@ class HistoryTableCell: UITableViewCell {
         self.startDate.text = Utility.string(fromDate: history.startDate!)
         self.countLbl.text = String(format: "%0.2f", history.count!)
     }
-
 }

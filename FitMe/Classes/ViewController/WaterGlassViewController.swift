@@ -68,7 +68,9 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     private func getMaximumCount() {
-        if let maxCountArr = manager.getWaterDetailArr(sqlStatement: "SELECT COUNT, DATE FROM (SELECT COUNT, DATE FROM \(kTABLE_NAME) ORDER BY COUNT DESC LIMIT 1)") {
+        let selectMaxQuery = "SELECT COUNT, DATE FROM (SELECT COUNT, DATE FROM \(kTABLE_NAME) ORDER BY COUNT DESC LIMIT 1);"
+        
+        if let maxCountArr = manager.getWaterDetailArr(sqlStatement: selectMaxQuery) {
             maxCountDetail = maxCountArr.first
         }
     }
@@ -79,7 +81,9 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
         
         manager = SqlLiteManager()
         manager.initDatabase()
-         detail =  manager.getWaterDetailArr(sqlStatement: "SELECT COUNT, DATE FROM WATER_DETAIL;")
+        
+        let selectQuery = "SELECT COUNT, DATE FROM WATER_DETAIL;"
+        detail =  manager.getWaterDetailArr(sqlStatement: selectQuery)
         
         initWeeklyGraph()
         getMaximumCount()
@@ -93,9 +97,11 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
     
         var endDate = Utility.string(fromDate: Date())
         endDate = endDate.removeHyphenFromString()
+        
+        let selectBtwQuery = "SELECT COUNT, DATE FROM WATER_DETAIL WHERE DATE >= '\(startDate)' AND DATE <= '\(endDate)'"
     
-        if let btwDetail = manager.getWaterDetailArr(sqlStatement: "SELECT COUNT, DATE FROM WATER_DETAIL WHERE DATE >= '\(startDate)' AND DATE <= '\(endDate)'") {
-            guard detail.count != 0 else{
+        if let btwDetail = manager.getWaterDetailArr(sqlStatement: selectBtwQuery) {
+            guard detail.count != 0 else {
                 lblArr.append(Utility.getDayString(fromDate: Date()))
                 countArr.append(0)
                 
@@ -107,6 +113,8 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
     }
+    
+    //MARK:- IBAction Methods
     
     @IBAction func actionSegmentControl(_ sender: UISegmentedControl) {
         countArr.removeAll()
@@ -145,12 +153,14 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let section:EWaterSection = EWaterSection(rawValue: indexPath.section)!
+        let graphCellHeight:CGFloat = 250
+        let recordCellHeight:CGFloat = 100
         
         switch section {
         case .Graph:
-            return 250
+            return graphCellHeight
         case .Record:
-            return 100
+            return recordCellHeight
         }
     }
     
@@ -167,15 +177,17 @@ class WaterGlassViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let section:EWaterSection = EWaterSection(rawValue: indexPath.section)!
+        let graphCellIdentifier = "GraphCell"
+        let recordCellIdentifier = "RecordCell"
         
         switch section {
         case .Graph:
             let cell = tableView.dequeueReusableCell(withIdentifier:
-                "GraphCell") as! GraphTableCell
+                graphCellIdentifier) as! GraphTableCell
             cell.setDataToCell(countArr: countArr, xLabelArr:lblArr)
             return cell
         case .Record:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "RecordCell") as! MaxGlassTableCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: recordCellIdentifier) as! MaxGlassTableCell
             cell.setDataToCell(detail: maxCountDetail!)
             return cell
         }

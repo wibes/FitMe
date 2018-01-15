@@ -2,7 +2,7 @@
 //  HealthKitManager.swift
 //  FitMe
 //
-//  Created by Chandan Makhija on 22/12/17.
+//  Created by Chandan Makhija on 02/01/18.
 //  Copyright © 2017 Chandan Makhija. All rights reserved.
 //
 
@@ -52,6 +52,8 @@ class HealthKitManager: NSObject {
         return type
     }
     
+    
+    // Get maximum count to display in record section
     func getMaxCount(forType:ERecord, quantity:HKQuantity)->Double {
         switch forType {
         case .Calorie:

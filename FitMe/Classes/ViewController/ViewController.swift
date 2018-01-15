@@ -85,7 +85,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func initStepGraph(dates:[Date]) {
-        emptyArray()
+        cleanArray()
 
         for date in dates {
             gCoreMotionManager.getPedometerData(fromDate: date, toDate: Utility.getEndDateFor(date: date), completionHandler: {[unowned self] (data) in
@@ -100,7 +100,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    private func emptyArray() {
+    private func cleanArray() {
         stepArr.removeAll()
         dayStringArr.removeAll()
     }

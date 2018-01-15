@@ -1,4 +1,10 @@
-
+//
+//  HealthKitSetupAssistant.swift
+//  FitMe
+//
+//  Created by Chandan Makhija on 02/01/18.
+//  Copyright © 2017 Chandan Makhija. All rights reserved.
+//
 
 import HealthKit
 
